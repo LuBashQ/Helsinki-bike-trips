@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { Home } from './components/pages/Home';
 import { Box, Toolbar, Typography } from '@mui/material';
+import { StationsTable } from './components/pages/Stations';
 
 function App() {
 
@@ -28,7 +29,7 @@ function App() {
         <Typography paragraph sx={{mr: "20%", ml: "20%", mt: 10}}>
           <Routes>
             <Route path="/" element={<Home />}></Route>
-            <Route path="/stations"></Route>
+            <Route path="/stations" element={<StationsTable />}></Route>
             <Route path="/trips"></Route>
             <Route path="/stations/:stationId"></Route>
           </Routes>
