@@ -1,33 +1,33 @@
-import { Box, Grid, IconButton, Typography } from '@mui/material';
+import {Box, Grid, IconButton, Typography} from '@mui/material';
 import React from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { LinkedIn } from '@mui/icons-material';
+import {LinkedIn} from '@mui/icons-material';
 
 const Copyright = () => {
     return (
-        <Typography variant="body2" color="text.secondary" align="center">
-            {'Copyright @ Cristian Nicolae Lupascu '}
-            {new Date().getFullYear()}.
+        <Typography variant="body2" color="secondary">
+            {'Cristian Nicolae Lupascu ©️ '}
+            {new Date().getFullYear()}
         </Typography>
     )
 }
 
 const Icons = () => {
     return (
-        <Grid   className="footer-icon-grid"
-                container
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                spacing={2}
-            >
-                <Grid item>
-                    <IconButton
-                        size="small"
-                        edge="start"
-                        color="inherit"
-                        aria-label="github"
-                        onClick={() => window.open("https://github.com/LuBashQ")}
+        <Grid className="footer-icon-grid"
+              container
+              alignItems="center"
+              justifyContent="center"
+              direction="row"
+              rowSpacing={2}
+        >
+            <Grid item>
+                <IconButton
+                    size="small"
+                    edge="start"
+                    color="inherit"
+                    aria-label="github"
+                    onClick={() => window.open("https://github.com/LuBashQ")}
                     >
                         <GitHubIcon />
                     </IconButton>
@@ -49,9 +49,9 @@ const Icons = () => {
 
 export const Footer = () => {
     return (
-        <Box className="footer" color="text.primary">
-            <Copyright />
-            <Icons />
+        <Box>
+            <Copyright/>
+            <Icons/>
         </Box>
     );
 }

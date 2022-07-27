@@ -39,3 +39,8 @@ services:
       context: './frontend'
     ports:
       - '${FRONTEND_PORT}:80'
+    environment:
+      - REACT_APP_BACKEND_HOST=backend
+      - REACT_APP_BACKEND_PORT=$BACKEND_PORT
+    links:
+      - backend

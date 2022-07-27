@@ -1,7 +1,18 @@
-import { Box, Collapse, Divider, IconButton, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import React from 'react'
+import {
+    Divider,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow,
+    Typography
+} from '@mui/material';
+import React, {useEffect} from 'react'
+import axios from 'axios';
+import {StationSearch} from './StationSearch';
 
 interface StationRow {
     id: number,
@@ -13,51 +24,42 @@ interface StationRow {
     city_fi: string,
     city_se: string,
     operator: string,
-    capacity: number
+    capacity: number,
+    x: number,
+    y: number
 }
 
-const StationsRow = (station: StationRow) => {
-    const [open, setOpen] = React.useState(false);
-
-    return (
-        <React.Fragment>
-            <TableRow sx={{"& > *":{borderBottom: 'unset'}}}>
-                <TableCell>
-                <IconButton
-                    aria-label="expand row"
-                    size="small"
-                    onClick={() => setOpen(!open)}
-                >
-                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                </IconButton>
-                </TableCell>
-                <TableCell align='right'>{station.id}</TableCell>
-                <TableCell align='right'>{station.name_fi}</TableCell>
-                <TableCell align='right'>{station.name_se}</TableCell>
-                <TableCell align='right'>{station.name_en}</TableCell>
-                <TableCell align='right'>{station.address_fi}</TableCell>
-                <TableCell align='right'>{station.address_se}</TableCell>
-                <TableCell align='right'>{station.city_fi}</TableCell>
-                <TableCell align='right'>{station.city_se}</TableCell>
-                <TableCell align='right'>{station.operator}</TableCell>
-                <TableCell align='right'>{station.capacity}</TableCell>
-            </TableRow>
-        </React.Fragment>
-    )
+interface TableProps {
+    page: number,
+    perPage: number,
+    stationsPage: StationRow[],
+    changePage: (event: unknown, newPage: number) => void,
+    changePerPage: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+interface Column {
+    id: string
+    label: string,
+}
 
-export const StationsTable = () => {
+const columns: readonly Column[] = [
+    {id: "id", label: "ID"},
+    {id: "name_fi", label: "Name (FI)"},
+    {id: "name_se", label: "Name (SE)"},
+    {id: "name_en", label: "Name (EN)"},
+    {id: "address_fi", label: "Address (FI)"},
+    {id: "address_se", label: "Address (SE)"},
+    {id: "city_fi", label: "City (FI)"},
+    {id: "city_se", label: "City (SE)"},
+    {id: "operator", label: "Operator"},
+    {id: "capacity", label: "Capacity"},
+]
+
+
+const StationsTable = ({page, perPage, stationsPage, changePage, changePerPage}: TableProps) => {
     return (
         <React.Fragment>
-            <Typography variant="h4" noWrap component="div" align='center' sx={{mb: "10px"}}>
-                Stations list
-            </Typography>
-            <Divider  sx={{mb: "10px"}}/>
-            <Typography variant='body1' paragraph sx={{wordWrap: "normal", mt: "10px", mb: "20px"}}>
-                Here you can take a look at all the available stations.
-            </Typography>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{maxHeight: 500, width: "100%"}}>
                 <Table stickyHeader aria-label='stations'>
                     <TableHead>
                         <TableRow>
@@ -67,22 +69,89 @@ export const StationsTable = () => {
                             <TableCell colSpan={2} align='center'>City</TableCell>
                             <TableCell colSpan={2}></TableCell>
                         </TableRow>
-                        <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Name (FI)</TableCell>
-                            <TableCell>Name (SE)</TableCell>
-                            <TableCell>Name (EN)</TableCell>
-                            <TableCell>Address (FI)</TableCell>
-                            <TableCell>Address (SE)</TableCell>
-                            <TableCell>City (FI)</TableCell>
-                            <TableCell>City (SE)</TableCell>
-                            <TableCell>Operator</TableCell>
-                            <TableCell>Capacity</TableCell>
-                        </TableRow>
+                        {columns.map(
+                            column => (
+                                <TableCell
+                                    key={column.id}
+                                    align="center"
+                                    style={{wordWrap: "break-word", overflowWrap: "break-word", width: "10%"}}
+                                >{column.label}</TableCell>
+                            )
+                        )}
                     </TableHead>
+                    <TableBody>
+                        {stationsPage
+                            .map(station => (
+                                <TableRow key={station.id}>
+                                    <TableCell align="center" width="10%">{station.id}</TableCell>
+                                    <TableCell align="center" width="10%">{station.name_fi}</TableCell>
+                                    <TableCell align="center" width="10%">{station.name_se}</TableCell>
+                                    <TableCell align="center" width="10%">{station.name_en}</TableCell>
+                                    <TableCell align="center" width="10%">{station.address_fi}</TableCell>
+                                    <TableCell align="center" width="10%">{station.address_se}</TableCell>
+                                    <TableCell align="center" width="10%">{station.city_fi}</TableCell>
+                                    <TableCell align="center" width="10%">{station.city_se}</TableCell>
+                                    <TableCell align="center" width="10%">{station.operator}</TableCell>
+                                    <TableCell align="center" width="10%">{station.capacity}</TableCell>
+                                </TableRow>
+                            ))}
+                    </TableBody>
                 </Table>
             </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[10, 20, 50]}
+                rowsPerPage={perPage}
+                count={stationsPage.length}
+                page={page}
+                onPageChange={changePage}
+                onRowsPerPageChange={changePerPage}
+                component="span"
+            />
         </React.Fragment>
-        
+    )
+}
+
+export const Stations = () => {
+
+    const [filters, setFilters] = React.useState('');
+    const [page, setPage] = React.useState(1);
+    const [perPage, setPerPage] = React.useState(10);
+    const [stationsPage, setStationsPage] = React.useState<StationRow[]>([]);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            console.log(`http://${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/stations?page=${page}&perPage=${perPage}${filters}`)
+            const res = await axios.get(`http://${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}/stations?page=${page}&perPage=${perPage}${filters}`);
+            setStationsPage(res.data.data);
+            console.log(res.data.data);
+        }
+
+        fetchData();
+    }, [page, perPage, filters])
+
+
+    const changePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    }
+
+    const changePerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPage(1);
+        setPerPage(+event.target.value);
+    }
+
+    return (
+        <React.Fragment>
+            <Typography variant="h4" noWrap component="div" align='center' sx={{mb: "10px"}}>
+                Stations list
+            </Typography>
+            <Divider sx={{mb: "10px"}}/>
+            <Typography variant='body1' paragraph sx={{wordWrap: "normal", mt: "10px", mb: "20px"}}>
+                Here you can take a look at and search for stations.
+            </Typography>
+            <StationSearch setFilters={setFilters}/>
+            <StationsTable page={page} perPage={perPage} stationsPage={stationsPage} changePage={changePage}
+                           changePerPage={changePerPage}/>
+        </React.Fragment>
     )
 }

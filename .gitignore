@@ -1,7 +1,7 @@
 **/*.csv
 backend/dist/
 backend/node_modules/
-**/.env
+**/.env*
 backend/coverage/
 **/*.xml
 .idea/

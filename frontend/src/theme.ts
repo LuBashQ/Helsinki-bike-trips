@@ -1,5 +1,5 @@
-import { createTheme } from '@mui/material/styles';
-import { red } from '@mui/material/colors';
+import {createTheme} from '@mui/material/styles';
+import {red} from '@mui/material/colors';
 
 // A custom theme for this app
 const theme = createTheme({
@@ -22,7 +22,17 @@ const theme = createTheme({
           color: '#ffffff'
         }
       }
-    }
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          "& .MuiTableCell-head": {
+            backgroundColor: '#007ac9',
+            color: '#ffffff'
+          }
+        }
+      }
+    },
   }
 });
 

@@ -1,15 +1,19 @@
+.app {
+    margin-bottom: 100px;
+}
+
 .footer {
-  position: absolute;
-  left: 0;
-  bottom: 20px;
-  right: 0;
-  flex-grow: 1;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .footer-icon-grid {
-  padding-top: 20px;
+    padding-top: 10px;
 }
 
 .header-drawer {
   background-color: #007ac9;
 }
+

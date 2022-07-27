@@ -1,8 +1,21 @@
-import { Box, AppBar, Toolbar, IconButton, Typography, Divider, ListItemIcon, List, Drawer, ListItemText, ListItemButton } from '@mui/material';
+import {
+    AppBar,
+    Box,
+    Divider,
+    Drawer,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Toolbar,
+    Typography
+} from '@mui/material';
 import React from 'react';
-import { LocationCity, PedalBike } from '@mui/icons-material';
+import {LocationCity, PedalBike} from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+import {Footer} from './Footer';
 
 interface HeaderProps {
     drawerWidth: number
@@ -38,16 +51,21 @@ export const Header = ({drawerWidth}: HeaderProps) => {
                 </ListItemButton>
                 <ListItemButton key="Stations" onClick={goToStations}>
                     <ListItemIcon>
-                        <LocationCity color="secondary" />
+                        <LocationCity color="secondary"/>
                     </ListItemIcon>
-                    <ListItemText primary="Stations" />
+                    <ListItemText primary="Stations"/>
                 </ListItemButton>
                 <ListItemButton key="Trips" onClick={goToTrips}>
                     <ListItemIcon>
-                        <PedalBike color="secondary" />
+                        <PedalBike color="secondary"/>
                     </ListItemIcon>
-                    <ListItemText primary="Trips" />
+                    <ListItemText primary="Trips"/>
                 </ListItemButton>
+            </List>
+            <List style={{position: "fixed", bottom: 0}}>
+                <ListItem>
+                    <Footer/>
+                </ListItem>
             </List>
         </div>
     )
