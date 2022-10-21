@@ -1,0 +1,13 @@
+td:not(:last-child) {
+    border-bottom: 0;
+}
+
+@media (min-width: 640px) {
+    table {
+        display: inline-table !important;
+    }
+
+    thead tr:not(:first-child) {
+        display: none;
+    }
+}
